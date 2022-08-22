@@ -8,26 +8,31 @@ class Book {
         this.read = read
     }
 }
+const addBtn = function () {
+    const addBtn = document.querySelector('.add-btn')
+    addBtn.addEventListener('click', function () {
+        const modal = document.querySelector('#modal')
+        modal.classList.remove('hidden')
+    })
+}
+addBtn()
 
-const addBtn = document.querySelector('.add-btn')
-addBtn.addEventListener('click', function () {
-    const modal = document.querySelector('#modal')
-    modal.classList.remove('hidden')
-})
+const addBook = function () {
+    const addBook = document.querySelector('.add-book')
+    addBook.addEventListener('click', function () {
+        const bookEl = bookContainer()
+        const bookContent = newBook()
 
-const addBook = document.querySelector('.add-book')
-addBook.addEventListener('click', function () {
-    const bookEl = bookContainer()
-    const bookContent = newBook()
-
-    bookEl.title.textContent = bookContent.title
-    bookEl.author.textContent = bookContent.author
-    bookEl.pages.textContent = bookContent.pages
-    bookEl.del.textContent = 'Delete'
-    bookEl.read.checked = bookContent.read
-    bookEl.label.textContent = 'Read?'
-    addToDOM(bookEl)
-})
+        bookEl.title.textContent = bookContent.title
+        bookEl.author.textContent = bookContent.author
+        bookEl.pages.textContent = bookContent.pages
+        bookEl.del.textContent = 'Delete'
+        bookEl.read.checked = bookContent.read
+        bookEl.label.textContent = 'Read?'
+        addToDOM(bookEl)
+    })
+}
+addBook()
 
 const addToDOM = function (el) {
     const container = document.querySelector('.library-list')
@@ -46,6 +51,7 @@ const addToDOM = function (el) {
     listItem.appendChild(el.label)
 
     delBook(el.del)
+    updateReadStatus()
 }
 
 const newBook = function () {
@@ -57,6 +63,18 @@ const newBook = function () {
     const book = new Book(title, author, pages, read)
     myLibrary.push(book)
     return book
+}
+
+const bookContainer = function (book) {
+    const bookContainer = bookElements()
+    const title = bookContainer.querySelector('.title')
+    const author = bookContainer.querySelector('.author')
+    const pages = bookContainer.querySelector('.pages')
+    const del = bookContainer.querySelector('.del-book')
+    const label = bookContainer.querySelector('.checkbox-label')
+    const read = bookContainer.querySelector('.read-checkbox')
+
+    return { title, author, pages, del, label, read }
 }
 
 const bookElements = function () {
@@ -79,20 +97,7 @@ const bookElements = function () {
     label.classList.add('checkbox-label')
 
     container.append(title, author, pages, del, read, label)
-
     return container
-}
-
-const bookContainer = function (book) {
-    const bookContainer = bookElements()
-    const title = bookContainer.querySelector('.title')
-    const author = bookContainer.querySelector('.author')
-    const pages = bookContainer.querySelector('.pages')
-    const del = bookContainer.querySelector('.del-book')
-    const label = bookContainer.querySelector('.checkbox-label')
-    const read = bookContainer.querySelector('.read-checkbox')
-
-    return { title, author, pages, del, label, read }
 }
 
 const delBook = function (delBtn) {
@@ -101,10 +106,25 @@ const delBook = function (delBtn) {
         book.parentNode.removeChild(book)
         const arrIndex = book.dataset.index
         myLibrary.splice(arrIndex, 1)
-        console.log(myLibrary)
+        updateDataAttribute()
         // delete from library arr thru data attribute
         //reset data attributes when a book is deleted (to line up with index in array)
         // update array with changes to read status
     })
 }
 
+const updateDataAttribute = function () {
+    const booksDOM = document.querySelector('.library-list').childNodes
+    booksDOM.forEach((book, i) => {
+        book.dataset.index = i
+    })
+}
+
+const updateReadStatus = function () {
+    const readChkBox = document.querySelector('.read-checkbox')
+    readChkBox.addEventListener('click', function () {
+        const book = this.parentNode
+        const arrIndex = book.dataset.index
+        myLibrary[arrIndex].read = readChkBox.checked
+    })
+}
