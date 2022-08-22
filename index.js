@@ -99,6 +99,9 @@ const delBook = function (delBtn) {
     delBtn.addEventListener('click', function () {
         const book = delBtn.parentNode
         book.parentNode.removeChild(book)
+        const arrIndex = book.dataset.index
+        myLibrary.splice(arrIndex, 1)
+        console.log(myLibrary)
         // delete from library arr thru data attribute
         //reset data attributes when a book is deleted (to line up with index in array)
         // update array with changes to read status
